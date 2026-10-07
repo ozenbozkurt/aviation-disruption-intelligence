@@ -24,9 +24,9 @@ The project is intentionally developed as a sequence of small, testable vertical
 
 ## v0.4 — Weather integration
 
-- [ ] Add a weather-data adapter behind a stable interface.
-- [ ] Cache and normalize weather observations.
-- [ ] Keep external-provider credentials out of the repository.
+- [x] Add a weather-data adapter behind a stable interface.
+- [x] Cache and normalize weather observations.
+- [x] Keep external-provider credentials out of the repository.
 
 ## v0.5 — Calibration and evaluation
 
