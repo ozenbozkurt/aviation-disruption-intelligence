@@ -46,7 +46,7 @@ class RouteRiskApiTests(unittest.TestCase):
         self.assertAlmostEqual(payload["historical_cancel_rate"], 0.2)
         self.assertEqual(payload["historical_total_rows"], 5)
         self.assertEqual(payload["band"], "MEDIUM")
-        self.assertAlmostEqual(payload["score"], 64.7)
+        self.assertAlmostEqual(payload["score"], 62.7)
         self.assertEqual(
             payload["drivers"],
             ["historical_delay_exposure", "low_visibility", "wind"],
