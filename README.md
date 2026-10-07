@@ -72,6 +72,14 @@ Example output shape:
 }
 ```
 
+## Weather adapter
+
+Weather data enters the project through a provider-independent interface. Providers normalize observations to wind in knots, visibility in kilometres, precipitation in mm/h, and a timezone-aware timestamp.
+
+Tests use an offline `StaticWeatherProvider`, while `CachedWeatherProvider` can wrap any future live provider with a small TTL cache. The scoring engine therefore stays independent of vendor APIs and credentials.
+
+See [docs/weather-providers.md](docs/weather-providers.md) for the provider, caching, and secret-management strategy.
+
 ## Historical data layer
 
 The v0.3 data layer uses **DuckDB** to derive route-level historical features from a local CSV.
@@ -158,7 +166,7 @@ Explainable risk engine
       |
       +----> DuckDB feature store (current)
       |
-      +----> Weather adapter (v0.4)
+      +----> Weather adapter (current)
 ```
 
 See [ROADMAP.md](ROADMAP.md) for the staged build plan and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
