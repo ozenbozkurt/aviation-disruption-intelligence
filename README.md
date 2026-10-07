@@ -37,7 +37,7 @@ Requires Python 3.10+.
 
 ```sh
 python -m venv .venv
-python -m pip install -e ".[api,data]"
+python -m pip install -e ".[api,data,weather]"
 ```
 
 Run the synthetic example:
@@ -71,6 +71,28 @@ Example output shape:
   }
 }
 ```
+
+## Live weather provider
+
+An optional Open-Meteo adapter can fetch current gridded weather for configured airport coordinates:
+
+```python
+from aviation_disruption.open_meteo import AirportCoordinates, OpenMeteoWeatherProvider
+
+airports = {
+    "FRA": AirportCoordinates(50.0379, 8.5622),
+}
+
+with OpenMeteoWeatherProvider(airports) as provider:
+    observation = provider.get_observation("FRA")
+    print(observation)
+```
+
+Install the weather extra with `python -m pip install -e ".[weather]"`.
+
+The adapter requests wind in knots, visibility in metres (converted internally to kilometres), and precipitation in millimetres. Tests use mocked HTTP responses and do not call the public service.
+
+**Important:** Open-Meteo returns gridded model weather. It is not an aerodrome METAR/TAF source and this project must not be used for dispatch, flight-safety, or go/no-go decisions.
 
 ## Weather adapter
 
