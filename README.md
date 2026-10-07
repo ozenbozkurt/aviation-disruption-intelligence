@@ -37,7 +37,7 @@ Requires Python 3.10+.
 
 ```sh
 python -m venv .venv
-python -m pip install -e ".[api]"
+python -m pip install -e ".[api,data]"
 ```
 
 Run the synthetic example:
@@ -71,6 +71,29 @@ Example output shape:
   }
 }
 ```
+
+## Historical data layer
+
+The v0.3 data layer uses **DuckDB** to derive route-level historical features from a local CSV.
+
+The included example is synthetic:
+
+```python
+from aviation_disruption.history import DuckDBHistoricalFeatureStore
+
+with DuckDBHistoricalFeatureStore("examples/synthetic_history.csv") as store:
+    rates = store.route_rates("FRA", "AMS")
+    print(rates.historical_delay_rate)
+    print(rates.historical_cancel_rate)
+```
+
+The SQL aggregation keeps operational definitions explicit:
+
+- cancellation rate = cancelled rows / all route rows
+- historical delay rate = operated flights delayed strictly more than the threshold / operated flights with a delay observation
+- the default late threshold is 15 minutes
+
+The feature store is local and deterministic. It does not download data or require credentials.
 
 ## HTTP API
 
@@ -133,7 +156,7 @@ Explainable risk engine
       |
       +----> FastAPI (current)
       |
-      +----> DuckDB feature store (v0.3)
+      +----> DuckDB feature store (current)
       |
       +----> Weather adapter (v0.4)
 ```

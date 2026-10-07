@@ -18,9 +18,9 @@ The project is intentionally developed as a sequence of small, testable vertical
 
 ## v0.3 — Data layer
 
-- [ ] Add DuckDB-backed historical flight features.
-- [ ] Define a reproducible synthetic/local data pipeline.
-- [ ] Separate raw inputs from derived operational features.
+- [x] Add DuckDB-backed historical flight features.
+- [x] Define a reproducible synthetic/local data pipeline.
+- [x] Separate raw inputs from derived operational features.
 
 ## v0.4 — Weather integration
 

@@ -16,6 +16,9 @@ api = [
   "uvicorn>=0.30,<1",
   "httpx>=0.27,<1",
 ]
+data = [
+  "duckdb>=1.1,<2",
+]
 
 [project.scripts]
 aviation-risk = "aviation_disruption.cli:main"

@@ -1,0 +1,13 @@
+origin,dest,dep_delay,cancelled
+FRA,AMS,5,0
+FRA,AMS,22,0
+FRA,AMS,48,0
+FRA,AMS,,1
+FRA,AMS,12,0
+FRA,LHR,8,0
+FRA,LHR,16,0
+FRA,LHR,,1
+AMS,FRA,2,0
+AMS,FRA,31,0
+AMS,FRA,7,0
+AMS,FRA,0,0
