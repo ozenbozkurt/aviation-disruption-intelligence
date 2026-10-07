@@ -12,9 +12,9 @@ The project is intentionally developed as a sequence of small, testable vertical
 
 ## v0.2 — API
 
-- [ ] Add a FastAPI service around the scoring engine.
-- [ ] Add request/response validation and API tests.
-- [ ] Publish a small OpenAPI usage example.
+- [x] Add a FastAPI service around the scoring engine.
+- [x] Add request/response validation and API tests.
+- [x] Publish a small OpenAPI usage example.
 
 ## v0.3 — Data layer
 
