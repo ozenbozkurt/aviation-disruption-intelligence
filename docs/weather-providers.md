@@ -40,3 +40,17 @@ A future live-provider adapter should:
 3. convert provider units into the normalized contract;
 4. map provider/network failures into clear application errors;
 5. remain replaceable without changes to the scoring engine.
+
+
+## Open-Meteo adapter
+
+The optional `OpenMeteoWeatherProvider` uses the public forecast endpoint for
+current gridded conditions at configured latitude/longitude coordinates.
+
+The adapter explicitly requests wind speed in knots and precipitation in
+millimetres, validates returned units, converts visibility from metres to
+kilometres, uses a finite request timeout, and wraps transport/provider failures
+in `WeatherProviderError`.
+
+This integration is intended for software and analytics demonstrations. It is
+not a replacement for aviation weather products such as METAR or TAF.
