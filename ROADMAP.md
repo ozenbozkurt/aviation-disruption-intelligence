@@ -28,6 +28,12 @@ The project is intentionally developed as a sequence of small, testable vertical
 - [x] Cache and normalize weather observations.
 - [x] Keep external-provider credentials out of the repository.
 
+## v0.4.1 — End-to-end route workflow
+
+- [x] Compose weather and historical features behind one service.
+- [x] Add a route-risk API endpoint with input provenance.
+- [x] Keep end-to-end tests offline and deterministic.
+
 ## v0.5 — Calibration and evaluation
 
 - [ ] Compare heuristic scores with observed disruption outcomes.
