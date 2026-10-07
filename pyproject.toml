@@ -19,6 +19,9 @@ api = [
 data = [
   "duckdb>=1.1,<2",
 ]
+weather = [
+  "httpx>=0.27,<1",
+]
 
 [project.scripts]
 aviation-risk = "aviation_disruption.cli:main"
