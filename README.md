@@ -72,6 +72,38 @@ Example output shape:
 }
 ```
 
+## End-to-end route risk
+
+The route service composes all current layers:
+
+```text
+route request
+    |
+    +--> historical route features (DuckDB)
+    |
+    +--> departure-airport weather (WeatherProvider)
+    |
+    +--> explainable scoring engine
+    |
+    +--> one route-risk response
+```
+
+An offline example can be served with synthetic data:
+
+```sh
+uvicorn examples.route_api:app --reload
+```
+
+Then request:
+
+```sh
+curl "http://127.0.0.1:8000/route-risk/FRA/AMS"
+```
+
+The response includes the risk score, band and drivers together with the weather timestamp and historical rates used to calculate it. This provenance is intentional: consumers should be able to see the main inputs behind the result.
+
+The default application still exposes `/risk` for callers that supply their own features. `/route-risk/{origin}/{dest}` requires a configured `RouteRiskService`.
+
 ## Live weather provider
 
 An optional Open-Meteo adapter can fetch current gridded weather for configured airport coordinates:
