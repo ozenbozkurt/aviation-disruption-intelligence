@@ -37,7 +37,7 @@ Requires Python 3.10+.
 
 ```sh
 python -m venv .venv
-python -m pip install -e .
+python -m pip install -e ".[api]"
 ```
 
 Run the synthetic example:
@@ -72,6 +72,32 @@ Example output shape:
 }
 ```
 
+## HTTP API
+
+Run the local API:
+
+```sh
+uvicorn aviation_disruption.api:app --reload
+```
+
+Then open `http://127.0.0.1:8000/docs` for the automatically generated OpenAPI interface.
+
+Example request:
+
+```sh
+curl -X POST "http://127.0.0.1:8000/risk" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wind_kts": 30,
+    "visibility_km": 4,
+    "precipitation_mm_h": 3,
+    "historical_delay_rate": 0.25,
+    "historical_cancel_rate": 0.02
+  }'
+```
+
+The API and CLI call the same scoring engine, so the scoring semantics remain in one place.
+
 ## Scoring philosophy
 
 The baseline is intentionally simple and inspectable:
@@ -105,7 +131,7 @@ Explainable risk engine
       |
       +----> CLI (current)
       |
-      +----> FastAPI (v0.2)
+      +----> FastAPI (current)
       |
       +----> DuckDB feature store (v0.3)
       |
