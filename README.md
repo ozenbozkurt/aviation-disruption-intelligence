@@ -144,6 +144,15 @@ traffic, delay and punctuality requests.
 See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the step-by-step
 identifier flow and testing strategy.
 
+## Period-relative disruption index
+
+Recruiter-facing case studies now use a transparent period-relative index that
+combines ATFM delay per flight with arrival and departure punctuality. Traffic
+volume remains contextual rather than being treated as disruption by itself.
+
+See [docs/disruption-index.md](docs/disruption-index.md) for the exact weighting,
+interpretation and limitations.
+
 ## AI-first case-study workflow
 
 The repository includes a manual GitHub Actions workflow that automates the
