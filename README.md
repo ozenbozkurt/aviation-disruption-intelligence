@@ -223,8 +223,13 @@ Explainable risk engine
       +----> Weather adapter (current)
 ```
 
-See [ROADMAP.md](ROADMAP.md) for the staged build plan and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
+See [ROADMAP.md](ROADMAP.md) for the staged build plan, [CHANGELOG.md](CHANGELOG.md) for maintained release changes, and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
 
 ## Safety and limitations
 
 This repository is an analytics and software-engineering project. The current score is **not validated for operational control, dispatch, flight safety, or go/no-go decisions**. Real-world use would require appropriate data quality controls, domain validation, calibration, governance, and human oversight.
+
+
+## Release status
+
+The first maintained public milestone is **v0.4.1**. See [RELEASE.md](RELEASE.md) for the release process. The project is not currently published to PyPI.
