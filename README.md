@@ -144,6 +144,17 @@ traffic, delay and punctuality requests.
 See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the step-by-step
 identifier flow and testing strategy.
 
+## AI-first case-study workflow
+
+The repository includes a manual GitHub Actions workflow that automates the
+repetitive analyst plumbing: fetch a EUROCONTROL date range, write the CSV,
+calculate a simple period summary, generate a recruiter-facing Markdown brief,
+and package an AI explanation prompt.
+
+See [docs/ai-first-workflow.md](docs/ai-first-workflow.md). The intended human
+skill is reviewing evidence and explaining operational meaning — not memorizing
+shell commands.
+
 ## Power BI-ready export
 
 A small example script can turn one real EUROCONTROL daily observation into a
