@@ -1,0 +1,44 @@
+name: EUROCONTROL Case Study
+
+on:
+  workflow_dispatch:
+    inputs:
+      country:
+        description: "Two-letter ISO country code"
+        required: true
+        default: "IT"
+      start_date:
+        description: "Start date (YYYY-MM-DD)"
+        required: true
+        default: "2026-03-21"
+      end_date:
+        description: "End date (YYYY-MM-DD)"
+        required: true
+        default: "2026-03-27"
+
+permissions:
+  contents: read
+
+jobs:
+  build-case-study:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: python -m pip install -e ".[eurocontrol]"
+      - name: Fetch EUROCONTROL data and build case study
+        run: >
+          python examples/build_eurocontrol_case_study.py
+          --country "${{ inputs.country }}"
+          --start-date "${{ inputs.start_date }}"
+          --end-date "${{ inputs.end_date }}"
+          --output-dir artifacts
+      - name: Upload case-study bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: eurocontrol-case-study-${{ inputs.country }}-${{ inputs.start_date }}-${{ inputs.end_date }}
+          path: artifacts/
+          if-no-files-found: error
