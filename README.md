@@ -144,6 +144,18 @@ traffic, delay and punctuality requests.
 See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the step-by-step
 identifier flow and testing strategy.
 
+## Power BI-ready export
+
+A small example script can turn one real EUROCONTROL daily observation into a
+flat CSV for Excel or Power BI:
+
+```sh
+python examples/export_eurocontrol_daily.py --country IT --date 2026-03-27 --output data/eurocontrol_it_2026-03-27.csv
+```
+
+See [docs/power-bi-handoff.md](docs/power-bi-handoff.md) for the beginner-friendly
+API -> typed Python object -> CSV -> dashboard mental model.
+
 ## Historical data layer
 
 The v0.3 data layer uses **DuckDB** to derive route-level historical features from a local CSV.
