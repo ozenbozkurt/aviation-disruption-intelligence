@@ -56,7 +56,7 @@ class NetworkCaseStudyTests(unittest.TestCase):
 
         self.assertIn("Highest-stress day", report)
         self.assertIn("2026-03-22", report)
-        self.assertIn("Missing dates skipped: 2026-03-20", report)
+        self.assertIn("**Missing dates skipped:** 2026-03-20", report)
         self.assertIn("not a flight-safety", report)
 
     def test_ai_prompt_forbids_invented_causes(self):
