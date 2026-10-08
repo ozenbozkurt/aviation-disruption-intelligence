@@ -65,6 +65,7 @@ class EurocontrolDataClient:
             raise ValueError("timeout_seconds must be positive")
         self._owns_client = client is None
         self._client = client or httpx.Client(timeout=timeout_seconds)
+        self._country_cache: dict[str, EurocontrolCountry] = {}
 
     def close(self) -> None:
         if self._owns_client:
@@ -95,18 +96,24 @@ class EurocontrolDataClient:
         if len(code) != 2 or not code.isalpha():
             raise ValueError("iso2 must be a two-letter country code")
 
+        cached = self._country_cache.get(code)
+        if cached is not None:
+            return cached
+
         rows = self._get_collection("countries", {"iso2": code})
         if not rows:
             raise EurocontrolDataError(f"No country found for ISO2 code {code}")
 
         row = rows[0]
         try:
-            return EurocontrolCountry(
+            country = EurocontrolCountry(
                 id=int(row["id"]),
                 name=str(row["name"]),
                 iso2=str(row["iso2"]).upper(),
                 icao=str(row["icao"]) if row.get("icao") is not None else None,
             )
+            self._country_cache[code] = country
+            return country
         except (KeyError, TypeError, ValueError) as exc:
             raise EurocontrolDataError(
                 f"Malformed country response for ISO2 code {code}"

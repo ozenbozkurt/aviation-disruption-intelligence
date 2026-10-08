@@ -56,3 +56,23 @@ Now Power BI can read the columns directly, calculate trends, and draw charts.
 
 The command makes a real network request. Automated tests do **not** call
 EUROCONTROL; they use local typed test data so CI remains reliable.
+
+
+## Step 3: from one row to a time series
+
+One day is useful for learning, but trends need many rows.
+
+Use the range exporter:
+
+```powershell
+python examples/export_eurocontrol_range.py --country IT --start-date 2026-03-01 --end-date 2026-03-07 --output data/eurocontrol_it_2026-03-01_to_2026-03-07.csv
+```
+
+That produces one row per day. In data language:
+
+- **row** = one daily observation,
+- **column** = one property recorded for every observation,
+- **metric** = a numeric column we want to measure or compare,
+- **time series** = the same metrics recorded across many dates.
+
+A 30- or 90-day file is the same idea; it simply contains more daily rows.

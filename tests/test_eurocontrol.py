@@ -210,5 +210,29 @@ class EurocontrolDataClientTests(unittest.TestCase):
             )
 
 
+    def test_country_lookup_is_cached_within_one_client(self):
+        calls = {"countries": 0}
+
+        def handler(request):
+            if request.url.path.endswith("/countries"):
+                calls["countries"] += 1
+                return httpx.Response(
+                    200,
+                    json={"data": [{"id": 21, "name": "Italy", "iso2": "IT", "icao": "LI"}]},
+                    request=request,
+                )
+            return httpx.Response(404, request=request)
+
+        client = httpx.Client(transport=httpx.MockTransport(handler))
+        provider = EurocontrolDataClient(client=client)
+
+        first = provider.get_country("IT")
+        second = provider.get_country("it")
+
+        self.assertEqual(first, second)
+        self.assertEqual(calls["countries"], 1)
+        client.close()
+
+
 if __name__ == "__main__":
     unittest.main()

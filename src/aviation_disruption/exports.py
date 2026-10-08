@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 from dataclasses import asdict
 from pathlib import Path
+from collections.abc import Iterable
 
 from .eurocontrol import DailyNetworkMetrics
 
@@ -55,5 +56,23 @@ def write_daily_network_csv(
         writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
         writer.writeheader()
         writer.writerow(daily_network_row(metrics))
+
+    return path
+
+
+def write_daily_network_csv_rows(
+    metrics_rows: Iterable[DailyNetworkMetrics],
+    output_path: str | Path,
+) -> Path:
+    """Write many daily observations to one flat CSV."""
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
+        writer.writeheader()
+        for metrics in metrics_rows:
+            writer.writerow(daily_network_row(metrics))
 
     return path
