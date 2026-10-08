@@ -32,7 +32,7 @@ class NetworkCaseStudyTests(unittest.TestCase):
             departure_punctuality_percent=departure,
         )
 
-    def test_summary_identifies_highest_delay_per_flight_day(self):
+    def test_summary_identifies_highest_disruption_index_day(self):
         rows = [
             self._row(21, flights=5000, delay=200, delay_per_flight=0.04, arrival=82, departure=75),
             self._row(22, flights=5200, delay=600, delay_per_flight=0.12, arrival=70, departure=65),
@@ -59,7 +59,9 @@ class NetworkCaseStudyTests(unittest.TestCase):
         self.assertIn("Highest-stress day", report)
         self.assertIn("2026-03-22", report)
         self.assertIn("**Missing dates skipped:** 2026-03-20", report)
-        self.assertIn("not a flight-safety", report)
+        self.assertIn("flight-safety", report)
+        self.assertIn("not validated for dispatch", report)
+        self.assertIn("Period-relative disruption index", report)
 
     def test_ai_prompt_forbids_invented_causes(self):
         rows = [
