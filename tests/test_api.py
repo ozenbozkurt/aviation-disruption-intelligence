@@ -9,6 +9,14 @@ class ApiTests(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
+    def test_root_is_portfolio_friendly(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["name"], "Aviation Disruption Intelligence")
+        self.assertEqual(payload["docs"], "/docs")
+        self.assertIn("not for flight-safety decisions", payload["scope"])
+
     def test_health(self):
         response = self.client.get("/health")
         self.assertEqual(response.status_code, 200)
