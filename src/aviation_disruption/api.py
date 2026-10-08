@@ -47,6 +47,16 @@ def create_app(route_service: RouteRiskService | None = None) -> FastAPI:
         ),
     )
 
+    @app.get("/")
+    def root() -> dict[str, str]:
+        return {
+            "name": "Aviation Disruption Intelligence",
+            "version": __version__,
+            "status": "live",
+            "docs": "/docs",
+            "scope": "portfolio analytics demo; not for flight-safety decisions",
+        }
+
     @app.get("/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}
