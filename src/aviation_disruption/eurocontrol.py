@@ -36,6 +36,20 @@ class EurocontrolSync:
     code: str | None
 
 
+@dataclass(frozen=True)
+class DailyNetworkMetrics:
+    """Headline network-performance values for one country and one day."""
+
+    country: EurocontrolCountry
+    sync_id: int
+    sync_date: str
+    total_flights: float
+    atfm_delay_minutes: float
+    atfm_delay_per_flight_minutes: float
+    arrival_punctuality_percent: float
+    departure_punctuality_percent: float
+
+
 class EurocontrolDataClient:
     """Read public network-performance data from the EUROCONTROL Data app."""
 
@@ -98,6 +112,32 @@ class EurocontrolDataClient:
                 f"Malformed country response for ISO2 code {code}"
             ) from exc
 
+    @staticmethod
+    def _network_value(
+        rows: list[dict[str, Any]],
+        *,
+        parent_key: str,
+        network_type: str,
+    ) -> float:
+        for row in rows:
+            parent = row.get(parent_key) or {}
+            if (
+                parent.get("rankingCategory") == "network"
+                and row.get("networkType") == network_type
+                and row.get("dateRange") == "DY"
+                and row.get("value") is not None
+            ):
+                try:
+                    return float(row["value"])
+                except (TypeError, ValueError) as exc:
+                    raise EurocontrolDataError(
+                        f"Malformed {parent_key} network value"
+                    ) from exc
+
+        raise EurocontrolDataError(
+            f"No daily network value found for {parent_key}/{network_type}"
+        )
+
     def get_sync(self, iso2: str, day: date) -> EurocontrolSync:
         country = self.get_country(iso2)
         day_text = day.isoformat()
@@ -145,3 +185,56 @@ class EurocontrolDataClient:
             raise EurocontrolDataError(
                 f"Malformed sync response for {country.iso2} on {day_text}"
             ) from exc
+
+    def get_daily_network_metrics(
+        self,
+        iso2: str,
+        day: date,
+    ) -> DailyNetworkMetrics:
+        """Return headline traffic, ATFM-delay and punctuality metrics."""
+
+        sync = self.get_sync(iso2, day)
+
+        traffic_rows = self._get_collection(
+            "traffic_networks",
+            {"traffic.sync.id": sync.id},
+        )
+        delay_rows = self._get_collection(
+            "delay_networks",
+            {"delay.sync.id": sync.id},
+        )
+        punctuality_rows = self._get_collection(
+            "punctualities_networks",
+            {"punctuality.sync.id": sync.id},
+        )
+
+        return DailyNetworkMetrics(
+            country=sync.country,
+            sync_id=sync.id,
+            sync_date=sync.sync_date,
+            total_flights=self._network_value(
+                traffic_rows,
+                parent_key="traffic",
+                network_type="total",
+            ),
+            atfm_delay_minutes=self._network_value(
+                delay_rows,
+                parent_key="delay",
+                network_type="total",
+            ),
+            atfm_delay_per_flight_minutes=self._network_value(
+                delay_rows,
+                parent_key="delay",
+                network_type="avg",
+            ),
+            arrival_punctuality_percent=self._network_value(
+                punctuality_rows,
+                parent_key="punctuality",
+                network_type="total",
+            ),
+            departure_punctuality_percent=self._network_value(
+                punctuality_rows,
+                parent_key="punctuality",
+                network_type="avg",
+            ),
+        )
