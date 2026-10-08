@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from . import __version__
 from .scoring import RiskInput, assess_risk
 from .service import RouteRiskService
 
@@ -39,7 +40,7 @@ class RouteRiskResponse(RiskResponse):
 def create_app(route_service: RouteRiskService | None = None) -> FastAPI:
     app = FastAPI(
         title="Aviation Disruption Intelligence",
-        version="0.1.0",
+        version=__version__,
         description=(
             "Explainable disruption-risk scoring for analytics and portfolio use. "
             "The current heuristic is not validated for safety-critical decisions."
