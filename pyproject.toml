@@ -22,6 +22,9 @@ data = [
 weather = [
   "httpx>=0.27,<1",
 ]
+eurocontrol = [
+  "httpx>=0.27,<1",
+]
 
 [project.scripts]
 aviation-risk = "aviation_disruption.cli:main"
