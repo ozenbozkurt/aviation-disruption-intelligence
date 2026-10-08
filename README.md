@@ -232,6 +232,10 @@ This repository is an analytics and software-engineering project. The current sc
 
 ## Hosted demo deployment
 
+**Live API:** https://aviation-disruption-intelligence.onrender.com
+
+**Interactive API docs:** https://aviation-disruption-intelligence.onrender.com/docs
+
 The repository includes a Render Blueprint for a public portfolio demo. The
 deployment entry point combines live Open-Meteo weather with the repository's
 **synthetic** historical route fixture and exposes the existing FastAPI routes.
