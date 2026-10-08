@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: aviation-disruption-intelligence
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -e ".[api,data,weather]"
+    startCommand: uvicorn aviation_disruption.live_api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
