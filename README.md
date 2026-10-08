@@ -134,6 +134,16 @@ Tests use an offline `StaticWeatherProvider`, while `CachedWeatherProvider` can 
 
 See [docs/weather-providers.md](docs/weather-providers.md) for the provider, caching, and secret-management strategy.
 
+## EUROCONTROL Data app
+
+The next data milestone integrates real European network-performance data from
+the public EUROCONTROL Data app beta API. The first client increment resolves a
+country and its date-specific Sync ID, which is the identifier used by later
+traffic, delay and punctuality requests.
+
+See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the step-by-step
+identifier flow and testing strategy.
+
 ## Historical data layer
 
 The v0.3 data layer uses **DuckDB** to derive route-level historical features from a local CSV.
