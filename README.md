@@ -144,6 +144,15 @@ traffic, delay and punctuality requests.
 See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the step-by-step
 identifier flow and testing strategy.
 
+## Featured case study
+
+**[Germany network performance — September 2026](case-studies/germany-september-2026.md)**
+
+A 30-day EUROCONTROL case study showing why the highest ATFM-delay day is not
+necessarily the broadest operational-disruption day. It demonstrates
+multi-signal analysis, transparent ranking, evidence-vs-hypothesis discipline,
+and an operations-focused interview narrative.
+
 ## Period-relative disruption index
 
 Recruiter-facing case studies now use a transparent period-relative index that
