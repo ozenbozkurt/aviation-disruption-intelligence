@@ -230,6 +230,15 @@ See [ROADMAP.md](ROADMAP.md) for the staged build plan, [CHANGELOG.md](CHANGELOG
 This repository is an analytics and software-engineering project. The current score is **not validated for operational control, dispatch, flight safety, or go/no-go decisions**. Real-world use would require appropriate data quality controls, domain validation, calibration, governance, and human oversight.
 
 
+## Hosted demo deployment
+
+The repository includes a Render Blueprint for a public portfolio demo. The
+deployment entry point combines live Open-Meteo weather with the repository's
+**synthetic** historical route fixture and exposes the existing FastAPI routes.
+
+See [docs/deployment.md](docs/deployment.md) for the deployment configuration,
+supported demo routes, and limitations.
+
 ## Release status
 
 The first maintained public milestone is **v0.4.1**. See [RELEASE.md](RELEASE.md) for the release process. The project is not currently published to PyPI.
