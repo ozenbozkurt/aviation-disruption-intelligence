@@ -54,6 +54,7 @@ def create_app(route_service: RouteRiskService | None = None) -> FastAPI:
             "version": __version__,
             "status": "live",
             "docs": "/docs",
+            "dashboard": "/dashboard/germany-september-2026",
             "scope": "portfolio analytics demo; not for flight-safety decisions",
         }
 
