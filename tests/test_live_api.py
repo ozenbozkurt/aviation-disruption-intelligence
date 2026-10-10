@@ -23,6 +23,8 @@ class LiveDeploymentAppTests(unittest.TestCase):
         self.assertIn("EUROCONTROL", response.text)
         self.assertIn("94.8/100", response.text)
         self.assertIn("Measurement first. Causal hypothesis second.", response.text)
+        self.assertIn('property="og:title"', response.text)
+        self.assertIn("Germany Aviation Operations Dashboard — EUROCONTROL Data", response.text)
 
 
 if __name__ == "__main__":
