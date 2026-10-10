@@ -148,6 +148,8 @@ identifier flow and testing strategy.
 
 **[Germany network performance — September 2026](case-studies/germany-september-2026.md)**
 
+**Live dashboard:** https://aviation-disruption-intelligence.onrender.com/dashboard/germany-september-2026
+
 A 30-day EUROCONTROL case study showing why the highest ATFM-delay day is not
 necessarily the broadest operational-disruption day. It demonstrates
 multi-signal analysis, transparent ranking, evidence-vs-hypothesis discipline,
@@ -286,6 +288,8 @@ This repository is an analytics and software-engineering project. The current sc
 **Live API:** https://aviation-disruption-intelligence.onrender.com
 
 **Interactive API docs:** https://aviation-disruption-intelligence.onrender.com/docs
+
+**Recruiter dashboard:** https://aviation-disruption-intelligence.onrender.com/dashboard/germany-september-2026
 
 The repository includes a Render Blueprint for a public portfolio demo. The
 deployment entry point combines live Open-Meteo weather with the repository's
