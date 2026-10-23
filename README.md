@@ -175,7 +175,9 @@ See [docs/ai-first-workflow.md](docs/ai-first-workflow.md). The intended human
 skill is reviewing evidence and explaining operational meaning — not memorizing
 shell commands.
 
-## Power BI-ready export
+## Power BI-ready export and analytical storage
+
+Real EUROCONTROL observations can be exported as flat CSV and persisted in DuckDB. The case-study workflow also produces a typed Parquet file for Power BI and other analytical tools.
 
 A small example script can turn one real EUROCONTROL daily observation into a
 flat CSV for Excel or Power BI:
@@ -184,8 +186,8 @@ flat CSV for Excel or Power BI:
 python examples/export_eurocontrol_daily.py --country IT --date 2026-03-27 --output data/eurocontrol_it_2026-03-27.csv
 ```
 
-See [docs/power-bi-handoff.md](docs/power-bi-handoff.md) for the beginner-friendly
-API -> typed Python object -> CSV -> dashboard mental model.
+See [docs/power-bi-handoff.md](docs/power-bi-handoff.md) for the full
+API -> typed Python object -> CSV/DuckDB/Parquet -> dashboard workflow.
 
 ## Historical data layer
 
@@ -300,4 +302,4 @@ supported demo routes, and limitations.
 
 ## Release status
 
-The first maintained public milestone is **v0.4.1**. See [RELEASE.md](RELEASE.md) for the release process. The project is not currently published to PyPI.
+The current portfolio milestone is **v0.5.0**, adding real EUROCONTROL ingestion, persistent DuckDB storage, CSV/Parquet analytical exports, the Germany September 2026 case study, a transparent period-relative disruption index, and the live recruiter-facing dashboard. See [RELEASE.md](RELEASE.md) for the release process. The project is not currently published to PyPI.
