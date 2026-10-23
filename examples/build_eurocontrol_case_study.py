@@ -13,6 +13,7 @@ from aviation_disruption.case_study import (
 )
 from aviation_disruption.eurocontrol import EurocontrolDataClient, EurocontrolDataError
 from aviation_disruption.exports import write_daily_network_csv_rows
+from aviation_disruption.network_store import DuckDBNetworkMetricsStore
 
 
 def parse_args() -> argparse.Namespace:
@@ -62,8 +63,13 @@ def main() -> None:
     csv_path = args.output_dir / f"{stem}.csv"
     report_path = args.output_dir / f"{stem}.md"
     prompt_path = args.output_dir / f"{stem}_ai_prompt.txt"
+    database_path = args.output_dir / f"{stem}.duckdb"
+    parquet_path = args.output_dir / f"{stem}.parquet"
 
     write_daily_network_csv_rows(rows, csv_path)
+    with DuckDBNetworkMetricsStore(database_path) as store:
+        store.upsert_many(rows)
+        store.export_parquet(parquet_path)
     summary = summarize_network_period(rows)
     report_path.write_text(
         render_case_study_markdown(summary, missing_dates=missing_dates),
@@ -75,6 +81,8 @@ def main() -> None:
     )
 
     print(f"Wrote {len(rows)} observations to {csv_path}")
+    print(f"Persisted normalized observations to {database_path}")
+    print(f"Wrote Power BI-ready Parquet to {parquet_path}")
     print(f"Wrote analyst brief to {report_path}")
     print(f"Wrote AI explanation prompt to {prompt_path}")
 
