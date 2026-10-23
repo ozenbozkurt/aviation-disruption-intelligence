@@ -34,9 +34,19 @@ The project is intentionally developed as a sequence of small, testable vertical
 - [x] Add a route-risk API endpoint with input provenance.
 - [x] Keep end-to-end tests offline and deterministic.
 
-## v0.5 — Calibration and evaluation
+## v0.5 — Real EUROCONTROL operations intelligence
 
-- [ ] Compare heuristic scores with observed disruption outcomes.
+- [x] Integrate official EUROCONTROL Data app beta API network metrics.
+- [x] Export multi-day real observations to Power BI-ready CSV.
+- [x] Persist normalized daily observations in DuckDB with provenance.
+- [x] Export the persisted analytical table to Parquet.
+- [x] Publish a reproducible Germany September 2026 operational case study.
+- [x] Add a transparent period-relative disruption index.
+- [x] Publish a recruiter-facing live dashboard.
+
+## v0.6 — Calibration and evaluation
+
+- [ ] Compare heuristic route-risk scores with observed disruption outcomes.
 - [ ] Define train/validation time splits before introducing ML.
 - [ ] Report calibration and error metrics instead of claiming predictive accuracy without evidence.
 
