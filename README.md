@@ -136,13 +136,18 @@ See [docs/weather-providers.md](docs/weather-providers.md) for the provider, cac
 
 ## EUROCONTROL Data app
 
-The next data milestone integrates real European network-performance data from
-the public EUROCONTROL Data app beta API. The first client increment resolves a
-country and its date-specific Sync ID, which is the identifier used by later
-traffic, delay and punctuality requests.
+The repository integrates real European network-performance data from the
+public EUROCONTROL Data app beta API. The client resolves country/date snapshot
+identifiers and retrieves daily traffic, ATFM delay-per-flight, total ATFM delay,
+and arrival/departure punctuality metrics.
 
-See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the step-by-step
-identifier flow and testing strategy.
+Real observations can be exported to CSV, persisted in DuckDB, exported to
+Parquet, summarized into a reproducible case study, and visualized in the live
+Germany September 2026 recruiter dashboard. CI stays offline by using mocked
+HTTP responses.
+
+See [docs/eurocontrol-data.md](docs/eurocontrol-data.md) for the identifier
+flow, metric semantics, provenance and testing strategy.
 
 ## Featured case study
 
@@ -175,7 +180,9 @@ See [docs/ai-first-workflow.md](docs/ai-first-workflow.md). The intended human
 skill is reviewing evidence and explaining operational meaning — not memorizing
 shell commands.
 
-## Power BI-ready export
+## Power BI-ready export and analytical storage
+
+Real EUROCONTROL observations can be exported as flat CSV and persisted in DuckDB. The case-study workflow also produces a typed Parquet file for Power BI and other analytical tools.
 
 A small example script can turn one real EUROCONTROL daily observation into a
 flat CSV for Excel or Power BI:
@@ -184,8 +191,8 @@ flat CSV for Excel or Power BI:
 python examples/export_eurocontrol_daily.py --country IT --date 2026-03-27 --output data/eurocontrol_it_2026-03-27.csv
 ```
 
-See [docs/power-bi-handoff.md](docs/power-bi-handoff.md) for the beginner-friendly
-API -> typed Python object -> CSV -> dashboard mental model.
+See [docs/power-bi-handoff.md](docs/power-bi-handoff.md) for the full
+API -> typed Python object -> CSV/DuckDB/Parquet -> dashboard workflow.
 
 ## Historical data layer
 
@@ -259,21 +266,17 @@ GitHub Actions runs the suite on Windows and Linux using Python 3.10 and 3.12.
 ## Architecture direction
 
 ```text
-Operational inputs
-      |
-      v
-Feature validation
-      |
-      v
-Explainable risk engine
-      |
-      +----> CLI (current)
-      |
-      +----> FastAPI (current)
-      |
-      +----> DuckDB feature store (current)
-      |
-      +----> Weather adapter (current)
+                         +--> live weather adapter
+Route-risk demo --------+--> synthetic DuckDB route history
+                         +--> explainable risk engine --> FastAPI
+
+EUROCONTROL Data app --> normalized daily metrics
+                         |
+                         +--> CSV
+                         +--> DuckDB
+                         +--> Parquet
+                         +--> disruption index
+                         +--> case study + live dashboard
 ```
 
 See [ROADMAP.md](ROADMAP.md) for the staged build plan, [CHANGELOG.md](CHANGELOG.md) for maintained release changes, and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
@@ -300,4 +303,4 @@ supported demo routes, and limitations.
 
 ## Release status
 
-The first maintained public milestone is **v0.4.1**. See [RELEASE.md](RELEASE.md) for the release process. The project is not currently published to PyPI.
+The current portfolio milestone is **v0.5.0**, adding real EUROCONTROL ingestion, persistent DuckDB storage, CSV/Parquet analytical exports, the Germany September 2026 case study, a transparent period-relative disruption index, and the live recruiter-facing dashboard. See [RELEASE.md](RELEASE.md) for the release process. The project is not currently published to PyPI.

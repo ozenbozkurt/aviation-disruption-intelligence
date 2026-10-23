@@ -76,3 +76,22 @@ That produces one row per day. In data language:
 - **time series** = the same metrics recorded across many dates.
 
 A 30- or 90-day file is the same idea; it simply contains more daily rows.
+
+
+## Portfolio bundle: DuckDB + CSV + Parquet
+
+The recruiter-facing case-study builder now creates three complementary data outputs from the same normalized observations:
+
+- `.csv` — easy to inspect and import into Excel or Power BI,
+- `.duckdb` — a queryable local analytical database with one normalized daily row per country/date,
+- `.parquet` — a compact typed analytical file that Power BI and other data tools can ingest efficiently.
+
+Run:
+
+```powershell
+python examples/build_eurocontrol_case_study.py --country DE --start-date 2026-09-01 --end-date 2026-09-30 --output-dir artifacts
+```
+
+The generated DuckDB table is named `eurocontrol_daily_network_metrics`. Each stored observation retains the EUROCONTROL snapshot ID, source timestamp (`sync_date`) and explicit provenance string.
+
+The Parquet export is generated from that persisted normalized table, so the CSV, database and Parquet outputs represent the same operational observations.
