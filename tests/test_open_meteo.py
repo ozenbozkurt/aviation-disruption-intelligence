@@ -16,6 +16,8 @@ class OpenMeteoProviderTests(unittest.TestCase):
             self.assertIn("latitude", request.url.params)
             self.assertIn("longitude", request.url.params)
             self.assertEqual(request.url.params["wind_speed_unit"], "kn")
+            self.assertEqual(request.url.params["current"], "wind_speed_10m,precipitation")
+            self.assertEqual(request.url.params["hourly"], "visibility")
             return httpx.Response(status_code, json=payload, request=request)
 
         return httpx.Client(transport=httpx.MockTransport(handler))
@@ -25,15 +27,15 @@ class OpenMeteoProviderTests(unittest.TestCase):
             "current_units": {
                 "time": "iso8601",
                 "wind_speed_10m": "kn",
-                "visibility": "m",
                 "precipitation": "mm",
             },
             "current": {
-                "time": "2026-10-08T00:00",
+                "time": "2026-10-08T00:20",
                 "wind_speed_10m": 22.5,
-                "visibility": 6500,
                 "precipitation": 1.8,
             },
+            "hourly_units": {"visibility": "m"},
+            "hourly": {"time": ["2026-10-08T00:00", "2026-10-08T01:00"], "visibility": [6500, 9000]},
         }
         client = self._client(payload)
         provider = OpenMeteoWeatherProvider(
@@ -47,6 +49,19 @@ class OpenMeteoProviderTests(unittest.TestCase):
         self.assertAlmostEqual(observation.visibility_km, 6.5)
         self.assertAlmostEqual(observation.precipitation_mm_h, 1.8)
         self.assertEqual(observation.observed_at.tzinfo, timezone.utc)
+        client.close()
+
+    def test_missing_hourly_visibility_is_rejected(self):
+        payload = {
+            "current_units": {"wind_speed_10m": "kn", "precipitation": "mm"},
+            "current": {"time": "2026-10-08T00:00", "wind_speed_10m": 10, "precipitation": 0},
+            "hourly_units": {"visibility": "m"},
+            "hourly": {"time": [], "visibility": []},
+        }
+        client = self._client(payload)
+        with OpenMeteoWeatherProvider({"FRA": AirportCoordinates(50.0379, 8.5622)}, client=client) as provider:
+            with self.assertRaisesRegex(WeatherProviderError, "Missing hourly visibility"):
+                provider.get_observation("FRA")
         client.close()
 
     def test_unknown_airport_is_rejected(self):
@@ -72,15 +87,15 @@ class OpenMeteoProviderTests(unittest.TestCase):
             "current_units": {
                 "time": "iso8601",
                 "wind_speed_10m": "km/h",
-                "visibility": "m",
                 "precipitation": "mm",
             },
             "current": {
                 "time": "2026-10-08T00:00",
                 "wind_speed_10m": 40,
-                "visibility": 6500,
                 "precipitation": 1.8,
             },
+            "hourly_units": {"visibility": "m"},
+            "hourly": {"time": ["2026-10-08T00:00"], "visibility": [6500]},
         }
         provider = OpenMeteoWeatherProvider(
             {"FRA": AirportCoordinates(50.0379, 8.5622)},
