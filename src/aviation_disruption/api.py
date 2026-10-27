@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from . import __version__
 from .scoring import RiskInput, assess_risk
 from .service import RouteRiskService
+
+
+logger = logging.getLogger(__name__)
 
 
 class RiskRequest(BaseModel):
@@ -87,6 +92,12 @@ def create_app(route_service: RouteRiskService | None = None) -> FastAPI:
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except RuntimeError as exc:
+            # Log only exception classes: upstream errors may contain URLs or secrets.
+            logger.warning(
+                "Route-risk dependency failure: error_type=%s cause_type=%s",
+                type(exc).__name__,
+                type(exc.__cause__).__name__ if exc.__cause__ else "none",
+            )
             raise HTTPException(
                 status_code=502,
                 detail="Weather provider is unavailable",

@@ -1,8 +1,9 @@
 import unittest
+from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
 
-from aviation_disruption.api import app
+from aviation_disruption.api import app, create_app
 
 
 class ApiTests(unittest.TestCase):
@@ -42,6 +43,24 @@ class ApiTests(unittest.TestCase):
             ["low_visibility", "wind", "historical_delay_exposure"],
         )
         self.assertIn("components", payload)
+
+    def test_route_provider_failure_logs_safe_exception_types(self):
+        try:
+            raise TimeoutError("private upstream request data")
+        except TimeoutError as underlying:
+            failure = RuntimeError("private provider error message")
+            failure.__cause__ = underlying
+
+        service = Mock()
+        service.assess_route.side_effect = failure
+        with TestClient(create_app(service)) as client:
+            with self.assertLogs("aviation_disruption.api", level="WARNING") as logs:
+                response = client.get("/route-risk/FRA/AMS")
+
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.json(), {"detail": "Weather provider is unavailable"})
+        self.assertIn("error_type=RuntimeError cause_type=TimeoutError", logs.output[0])
+        self.assertNotIn("private", logs.output[0])
 
     def test_invalid_rate_is_rejected_by_schema(self):
         response = self.client.post(
