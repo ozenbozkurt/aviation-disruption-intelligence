@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import logging
 
+import httpx
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
@@ -93,10 +95,18 @@ def create_app(route_service: RouteRiskService | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except RuntimeError as exc:
             # Log only exception classes: upstream errors may contain URLs or secrets.
+            cause = exc.__cause__
+            upstream_status = (
+                cause.response.status_code
+                if isinstance(cause, httpx.HTTPStatusError)
+                else None
+            )
+            # Log an HTTP status number, never upstream URLs, bodies, or headers.
             logger.warning(
-                "Route-risk dependency failure: error_type=%s cause_type=%s",
+                "Route-risk dependency failure: error_type=%s cause_type=%s upstream_status=%s",
                 type(exc).__name__,
-                type(exc.__cause__).__name__ if exc.__cause__ else "none",
+                type(cause).__name__ if cause else "none",
+                upstream_status if upstream_status is not None else "none",
             )
             raise HTTPException(
                 status_code=502,
