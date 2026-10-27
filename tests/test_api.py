@@ -1,4 +1,6 @@
 import unittest
+
+import httpx
 from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
@@ -59,8 +61,27 @@ class ApiTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 502)
         self.assertEqual(response.json(), {"detail": "Weather provider is unavailable"})
-        self.assertIn("error_type=RuntimeError cause_type=TimeoutError", logs.output[0])
+        self.assertIn("error_type=RuntimeError cause_type=TimeoutError upstream_status=none", logs.output[0])
         self.assertNotIn("private", logs.output[0])
+
+    def test_upstream_http_status_is_logged_without_sensitive_data(self):
+        request = httpx.Request("GET", "https://example.invalid/secret?token=hidden")
+        response = httpx.Response(400, request=request, text="private upstream body")
+        upstream = httpx.HTTPStatusError(
+            "private upstream error", request=request, response=response
+        )
+        failure = RuntimeError("private provider error")
+        failure.__cause__ = upstream
+        service = Mock()
+        service.assess_route.side_effect = failure
+        with TestClient(create_app(service)) as client:
+            with self.assertLogs("aviation_disruption.api", level="WARNING") as logs:
+                result = client.get("/route-risk/FRA/AMS")
+        self.assertEqual(result.status_code, 502)
+        self.assertIn("upstream_status=400", logs.output[0])
+        self.assertNotIn("hidden", logs.output[0])
+        self.assertNotIn("private", logs.output[0])
+        self.assertNotIn("example.invalid", logs.output[0])
 
     def test_invalid_rate_is_rejected_by_schema(self):
         response = self.client.post(
