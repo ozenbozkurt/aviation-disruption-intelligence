@@ -54,3 +54,7 @@ in `WeatherProviderError`.
 
 This integration is intended for software and analytics demonstrations. It is
 not a replacement for aviation weather products such as METAR or TAF.
+
+## Visibility time alignment
+
+Open-Meteo exposes `visibility` as an hourly forecast variable, not a `current` variable. The adapter requests current wind and precipitation alongside hourly visibility, selects the nearest hourly timestamp to the current observation (maximum 60-minute difference), validates its units and value, and converts metres to kilometres. This combines modelled values at slightly different timestamps; it is suitable for the analytics demo only, never flight operations or safety decisions.

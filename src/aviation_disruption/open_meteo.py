@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from typing import Mapping
 
 import httpx
+import math
 
 from .weather import WeatherObservation
 
@@ -63,7 +64,9 @@ class OpenMeteoWeatherProvider:
         params = {
             "latitude": coords.latitude,
             "longitude": coords.longitude,
-            "current": "wind_speed_10m,visibility,precipitation",
+            "current": "wind_speed_10m,precipitation",
+            "hourly": "visibility",
+            "forecast_days": 1,
             "wind_speed_unit": "kn",
             "precipitation_unit": "mm",
             "timezone": "GMT",
@@ -81,10 +84,12 @@ class OpenMeteoWeatherProvider:
         try:
             current = payload["current"]
             units = payload["current_units"]
+            hourly = payload["hourly"]
+            hourly_units = payload["hourly_units"]
 
             if units["wind_speed_10m"] != "kn":
                 raise WeatherProviderError("Unexpected wind-speed unit")
-            if units["visibility"] != "m":
+            if hourly_units["visibility"] != "m":
                 raise WeatherProviderError("Unexpected visibility unit")
             if units["precipitation"] != "mm":
                 raise WeatherProviderError("Unexpected precipitation unit")
@@ -93,10 +98,27 @@ class OpenMeteoWeatherProvider:
             if observed_at.tzinfo is None:
                 observed_at = observed_at.replace(tzinfo=timezone.utc)
 
+            # Visibility is only available hourly in the Open-Meteo API.
+            # Select the nearest forecast hour to the current observation.
+            times = hourly["time"]
+            values = hourly["visibility"]
+            if not times or len(times) != len(values):
+                raise WeatherProviderError("Missing hourly visibility data")
+            hourly_times = [
+                datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
+                for value in times
+            ]
+            index = min(range(len(times)), key=lambda i: abs((hourly_times[i] - observed_at).total_seconds()))
+            if abs((hourly_times[index] - observed_at).total_seconds()) > 3600:
+                raise WeatherProviderError("Hourly visibility is not near current observation")
+            visibility = float(values[index])
+            if not math.isfinite(visibility) or visibility < 0:
+                raise WeatherProviderError("Invalid hourly visibility")
+
             return WeatherObservation(
                 airport=code,
                 wind_kts=float(current["wind_speed_10m"]),
-                visibility_km=float(current["visibility"]) / 1000.0,
+                visibility_km=visibility / 1000.0,
                 precipitation_mm_h=float(current["precipitation"]),
                 observed_at=observed_at,
             )
